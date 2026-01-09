@@ -1,7 +1,8 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nginx"]
+nixPkgs = ["php82", "php82Packages.composer"]
 
 [phases.install]
 cmds = ["composer install --ignore-platform-reqs --no-dev --optimize-autoloader"]
 
-# DELETE THE WHOLE [start] BLOCK THAT WAS HERE
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=8000"
