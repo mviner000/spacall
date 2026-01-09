@@ -1,122 +1,59 @@
-# Laravel Backend Project
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-A minimal Laravel backend setup with only the essential components.
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-## 🚀 Quick Start
+## About Laravel
 
-### Prerequisites
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- Ubuntu 24.04 (or similar Linux distribution)
-- Basic terminal knowledge
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-### Setup Instructions
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-#### 1. Install Requirements
+## Learning Laravel
 
-First, install all necessary dependencies (PHP, Composer, SQLite, Node.js):
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
 
-```bash
-chmod +x install-laravel-requirements.sh
-./install-laravel-requirements.sh
-```
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-This will install:
-- PHP 8.3 with required extensions
-- Composer (PHP package manager)
-- SQLite database
-- Node.js (optional, for frontend tools)
+## Laravel Sponsors
 
-#### 2. Create the Backend Project
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-Run the setup script to create a minimal Laravel backend:
+### Premium Partners
 
-```bash
-chmod +x create-backend.sh
-./create-backend.sh
-```
+- **[Vehikl](https://vehikl.com)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+- **[Redberry](https://redberry.international/laravel-development)**
+- **[Active Logic](https://activelogic.com)**
 
-This script will:
-- Create a new Laravel project named `backend`
-- Remove unnecessary files (tests, frontend assets, config files)
-- Set up minimal `.env` configuration with SQLite
-- Generate application key
-- Create SQLite database file
+## Contributing
 
-#### 3. Start the Development Server
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-```bash
-cd backend
-php artisan serve
-```
+## Code of Conduct
 
-The application will be available at: **http://localhost:8000**
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## 📁 Project Structure
+## Security Vulnerabilities
 
-```
-laravel_proj/
-├── backend/                          # Laravel application
-├── create-backend.sh                 # Setup script
-├── install-laravel-requirements.sh   # Requirements installer
-└── README.md                         # This file
-```
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## 🔧 Configuration
+## License
 
-The project uses minimal configuration:
-- **Database**: SQLite (no MySQL required)
-- **Cache**: Array driver (in-memory)
-- **Session**: Array driver
-- **Queue**: Sync (no queue worker needed)
-
-## 📝 Git Commit Guide
-
-Follow these commit message prefixes to keep our git history clean and organized!
-
-### Common Commit Types
-
-| Prefix   | Meaning                                                                 | Example |
-|----------|-------------------------------------------------------------------------|---------|
-| **feat:**    | Introduces a new feature                                               | `feat: add user profile page` |
-| **fix:**     | Fixes a bug                                                            | `fix: resolve login redirect issue` |
-| **docs:**    | Documentation changes only                                             | `docs: update README with setup steps` |
-| **style:**   | Code style changes (formatting, missing semicolons, no logic changes) | `style: format dashboard layout` |
-| **refactor:**| Rewriting code without altering behavior                               | `refactor: simplify auth logic` |
-| **perf:**    | Performance improvements                                               | `perf: optimize database queries` |
-| **test:**    | Adding or updating tests only                                          | `test: add unit tests for auth` |
-| **build:**   | Changes to build system, dependencies, or CI pipelines                 | `build: update next.js to v14` |
-| **ci:**      | CI configuration or scripts                                            | `ci: add github actions workflow` |
-| **chore:**   | Maintenance tasks (e.g., cleaning files, bumps), no production code    | `chore: clean up unused imports` |
-| **revert:**  | Reverts a previous commit                                              | `revert: undo feature X` |
-
-## 🛠️ Common Commands
-
-```bash
-# Start development server
-php artisan serve
-
-# Run migrations
-php artisan migrate
-
-# Clear cache
-php artisan cache:clear
-php artisan config:clear
-
-# View routes
-php artisan route:list
-```
-
-## 📚 Documentation
-
-- [Laravel Documentation](https://laravel.com/docs)
-- [PHP Documentation](https://www.php.net/docs.php)
-
-## 🤝 Contributing
-
-1. Create a new branch for your feature
-2. Follow the git commit guide above
-3. Submit a pull request
-
-## 📄 License
-
-This project is open-sourced software licensed under the MIT license.
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
