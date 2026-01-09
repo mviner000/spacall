@@ -57,3 +57,26 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## 📝 Git Commit Guide
+
+Follow these commit message prefixes to keep our git history clean and organized!
+
+### Common Commit Types
+
+| Prefix   | Meaning                                                                 | Example |
+|----------|-------------------------------------------------------------------------|---------|
+| **feat:**    | Introduces a new feature                                               | `feat: add user profile page` |
+| **fix:**     | Fixes a bug                                                            | `fix: resolve login redirect issue` |
+| **docs:**    | Documentation changes only                                             | `docs: update README with setup steps` |
+| **style:**   | Code style changes (formatting, missing semicolons, no logic changes) | `style: format dashboard layout` |
+| **refactor:**| Rewriting code without altering behavior                               | `refactor: simplify auth logic` |
+| **perf:**    | Performance improvements                                               | `perf: optimize database queries` |
+| **test:**    | Adding or updating tests only                                          | `test: add unit tests for auth` |
+| **build:**   | Changes to build system, dependencies, or CI pipelines                 | `build: update next.js to v14` |
+| **ci:**      | CI configuration or scripts                                            | `ci: add github actions workflow` |
+| **chore:**   | Maintenance tasks (e.g., cleaning files, bumps), no production code    | `chore: clean up unused imports` |
+| **revert:**  | Reverts a previous commit                                              | `revert: undo feature X` |
+
+## 🛠️ Common Commands
