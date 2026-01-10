@@ -1,26 +1,37 @@
-FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067
+FROM php:8.2-fpm
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpq-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    nginx
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath
+
+# Get Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
 WORKDIR /app
-
-# Install PHP, Composer, Node.js, and Nginx
-RUN nix-env -iA nixpkgs.php82 \
-    nixpkgs.php82Packages.composer \
-    nixpkgs.nodejs_20 \
-    nixpkgs.nginx \
-    nixpkgs.php82Extensions.pgsql \
-    nixpkgs.php82Extensions.pdo_pgsql \
-    && nix-collect-garbage -d
 
 # Copy application files
 COPY . .
 
 # Install dependencies
-RUN composer install --ignore-platform-reqs --no-dev --optimize-autoloader && \
-    php artisan config:cache && \
+RUN composer install --no-dev --optimize-autoloader
+
+# Laravel optimizations
+RUN php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache
 
-# Create nginx config
+# Nginx config
 RUN echo 'server { \n\
     listen 80; \n\
     root /app/public; \n\
@@ -33,10 +44,10 @@ RUN echo 'server { \n\
     location ~ \.php$ { \n\
         fastcgi_pass 127.0.0.1:9000; \n\
         fastcgi_index index.php; \n\
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; \n\
-        include /nix/store/*/conf/fastcgi_params; \n\
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name; \n\
+        include fastcgi_params; \n\
     } \n\
-}' > /etc/nginx/nginx.conf
+}' > /etc/nginx/sites-available/default
 
 EXPOSE 80
 
