@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath
+# Install PHP extensions (including pgsql!)
+RUN docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath
 
 # Get Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -51,4 +51,4 @@ RUN echo 'server { \n\
 
 EXPOSE 80
 
-CMD php-fpm -D && nginx -g 'daemon off;'
+CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
