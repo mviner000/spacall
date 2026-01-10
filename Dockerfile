@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx
 
-# Install PHP extensions (including pgsql!)
+# Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath
 
 # Get Composer
@@ -26,10 +26,10 @@ COPY . .
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Laravel optimizations
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# DON'T cache config during build - do it at runtime instead
+# RUN php artisan config:cache && \
+#     php artisan route:cache && \
+#     php artisan view:cache
 
 # Nginx config
 RUN echo 'server { \n\
@@ -51,4 +51,5 @@ RUN echo 'server { \n\
 
 EXPOSE 80
 
+# Start php-fpm and nginx
 CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
