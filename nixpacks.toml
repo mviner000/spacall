@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer"]
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20"]
 
 [phases.install]
 cmds = [
@@ -9,4 +9,4 @@ cmds = [
   "php artisan view:cache"
 ]
 
-# Don't set [start] - let Nixpacks use default nginx+php-fpm
+# No [start] section - let Nixpacks handle nginx+php-fpm
