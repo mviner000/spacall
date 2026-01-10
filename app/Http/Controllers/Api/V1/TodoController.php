@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Models\Todo;
 use App\Events\TodoCreated;
 use App\Events\TodoUpdated;
@@ -24,7 +25,6 @@ class TodoController extends Controller
 
         $todo = Todo::create($validated);
         
-        // Broadcast the event
         event(new TodoCreated($todo));
         
         return response()->json($todo, 201);
@@ -44,7 +44,6 @@ class TodoController extends Controller
 
         $todo->update($validated);
         
-        // Broadcast the event
         event(new TodoUpdated($todo));
         
         return response()->json($todo);
@@ -55,7 +54,6 @@ class TodoController extends Controller
         $todoId = $todo->id;
         $todo->delete();
         
-        // Broadcast the event
         event(new TodoDeleted($todoId));
         
         return response()->json(null, 204);
