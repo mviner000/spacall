@@ -13,9 +13,23 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         apiPrefix: 'api',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
+    ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
+        
+        // Apply security middleware globally to API routes
+        $middleware->api(prepend: [
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\RequestSizeLimit::class,
+            \App\Http\Middleware\IpBlocker::class,
+        ]);
+        
+        // Rate limiting aliases
+        $middleware->alias([
+            'throttle.public' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.config('app.rate_limit_public', 10).',1',
+            'throttle.auth' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.config('app.rate_limit_auth', 60).',1',
+            'throttle.login' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.config('app.rate_limit_login_attempts', 5).',1',
+        ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

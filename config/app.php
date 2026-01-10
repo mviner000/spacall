@@ -123,4 +123,24 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Rate Limiting Configuration
+    |--------------------------------------------------------------------------
+    */
+    'rate_limit_public' => env('RATE_LIMIT_PUBLIC', 10),
+    'rate_limit_auth' => env('RATE_LIMIT_AUTH', 60),
+    'rate_limit_admin' => env('RATE_LIMIT_ADMIN', 1000),
+    'rate_limit_login_attempts' => env('RATE_LIMIT_LOGIN_ATTEMPTS', 5),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Security Configuration
+    |--------------------------------------------------------------------------
+    */
+    'max_request_size' => env('MAX_REQUEST_SIZE', 2048), // KB
+    'max_json_depth' => env('MAX_JSON_DEPTH', 512),
+    'enable_ip_blocking' => env('ENABLE_IP_BLOCKING', true),
+    'block_duration' => env('BLOCK_DURATION', 3600), // seconds
+
 ];
