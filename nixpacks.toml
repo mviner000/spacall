@@ -9,4 +9,4 @@ cmds = [
   "php artisan view:cache"
 ]
 
-# No start command - docker-compose handles this
+# Don't set [start] - let Nixpacks use default nginx+php-fpm
