@@ -24,10 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         
         // Rate limiting aliases
+        // FIX: Use env() instead of config() here to prevent "ReflectionException" during startup.
         $middleware->alias([
-            'throttle.public' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.config('app.rate_limit_public', 10).',1',
-            'throttle.auth' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.config('app.rate_limit_auth', 60).',1',
-            'throttle.login' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.config('app.rate_limit_login_attempts', 5).',1',
+            'throttle.public' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.env('APP_RATE_LIMIT_PUBLIC', 10).',1',
+            'throttle.auth'   => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.env('APP_RATE_LIMIT_AUTH', 60).',1',
+            'throttle.login'  => \Illuminate\Routing\Middleware\ThrottleRequests::class.':'.env('APP_RATE_LIMIT_LOGIN_ATTEMPTS', 5).',1',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

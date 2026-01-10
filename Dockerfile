@@ -26,16 +26,15 @@ COPY . .
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# DON'T cache config during build - do it at runtime instead
-# RUN php artisan config:cache && \
-#     php artisan route:cache && \
-#     php artisan view:cache
-
 # Nginx config
+# Configured to log to stdout/stderr so you can see logs in Coolify
 RUN echo 'server { \n\
     listen 80; \n\
     root /app/public; \n\
     index index.php; \n\
+    \n\
+    access_log /dev/stdout; \n\
+    error_log /dev/stderr; \n\
     \n\
     location / { \n\
         try_files $uri $uri/ /index.php?$query_string; \n\
@@ -52,4 +51,6 @@ RUN echo 'server { \n\
 EXPOSE 80
 
 # Start php-fpm and nginx
-CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
+# CRITICAL CHANGE: We run artisan cache commands here (at runtime) 
+# so they can see the Coolify environment variables.
+CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && php artisan view:cache && php-fpm -D && nginx -g 'daemon off;'"]
