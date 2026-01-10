@@ -1,5 +1,6 @@
 [phases.setup]
 nixPkgs = ["php82", "php82Packages.composer"]
+nixLibs = ["phpExtensions.pgsql"]
 
 [phases.install]
 cmds = [
@@ -7,4 +8,4 @@ cmds = [
 ]
 
 [start]
-cmd = "php artisan reverb:start --host=0.0.0.0 --port=8080"
+cmd = "php artisan reverb:start --host=0.0.0.0 --port=8081 --debug"
