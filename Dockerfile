@@ -23,9 +23,8 @@ WORKDIR /app
 # 5. Copy application files
 COPY . .
 
-# 6. FIX PERMISSIONS (Critical for Newbies)
-# This creates the necessary folders and gives the web user (www-data) 
-# permission to write logs and cache files.
+# 6. BUILD-TIME PERMISSIONS (Base Layer)
+# We still do this to ensure the image itself is correct
 RUN mkdir -p storage/logs storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache \
     && chown -R www-data:www-data /app \
     && chmod -R 775 storage bootstrap/cache
@@ -56,7 +55,7 @@ RUN echo 'server { \n\
 
 EXPOSE 80
 
-# 9. STARTUP SEQUENCE
-# We use "su -s /bin/sh -c ... www-data" to run migrations and cache commands 
-# as the web user instead of root. This prevents permission errors.
-CMD ["sh", "-c", "su -s /bin/sh -c 'php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache' www-data && php-fpm -D && nginx -g 'daemon off;'"]
+# 9. ROBUST STARTUP SEQUENCE (The Fix)
+# We act as ROOT first to force ownership of the mounted volumes (storage/cache).
+# Then we switch to www-data to run the app logic securely.
+CMD ["sh", "-c", "chown -R www-data:www-data /app/storage /app/bootstrap/cache && su -s /bin/sh -c 'php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache' www-data && php-fpm -D && nginx -g 'daemon off;'"]
