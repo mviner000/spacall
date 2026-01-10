@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Events\SecurityEvent;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -33,6 +34,14 @@ class IpBlocker
                 'path' => $request->path(),
             ]);
 
+            // Broadcast blocked attempt
+            event(new SecurityEvent('blocked_attempt', [
+                'ip' => $ip,
+                'path' => $request->path(),
+                'method' => $request->method(),
+                'user_agent' => $request->userAgent(),
+            ]));
+
             return response()->json([
                 'message' => 'Access temporarily blocked due to suspicious activity',
                 'retry_after' => $blockedUntil,
@@ -55,6 +64,14 @@ class IpBlocker
                 'blocked_until' => $blockedUntil,
             ]);
 
+            // Broadcast new block
+            event(new SecurityEvent('ip_blocked', [
+                'ip' => $ip,
+                'reason' => 'Suspicious activity threshold reached',
+                'suspicious_count' => $suspiciousCount,
+                'blocked_until' => $blockedUntil->toIso8601String(),
+            ]));
+
             return response()->json([
                 'message' => 'Access blocked due to suspicious activity',
                 'retry_after' => $blockedUntil,
@@ -71,6 +88,13 @@ class IpBlocker
     {
         $key = 'suspicious_ip:' . $ip;
         $count = Cache::get($key, 0);
-        Cache::put($key, $count + 1, now()->addHours(1));
+        $newCount = $count + 1;
+        Cache::put($key, $newCount, now()->addHours(1));
+
+        // Broadcast suspicious activity
+        event(new SecurityEvent('suspicious_activity', [
+            'ip' => $ip,
+            'count' => $newCount,
+        ]));
     }
 }

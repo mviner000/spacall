@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\SecurityEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\IpBlocker;
 use App\Models\User;
@@ -37,6 +38,12 @@ class AuthController extends Controller
             'ip' => $request->ip(),
         ]);
 
+        // Broadcast successful registration
+        event(new SecurityEvent('user_registered', [
+            'email' => $user->email,
+            'ip' => $request->ip(),
+        ]));
+
         return response()->json([
             'user' => $user,
             'access_token' => $token,
@@ -65,6 +72,12 @@ class AuthController extends Controller
                 'ip' => $request->ip(),
             ]);
 
+            // Broadcast failed login
+            event(new SecurityEvent('failed_login', [
+                'email' => $validated['email'],
+                'ip' => $request->ip(),
+            ]));
+
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -77,6 +90,12 @@ class AuthController extends Controller
             'email' => $user->email,
             'ip' => $request->ip(),
         ]);
+
+        // Broadcast successful login
+        event(new SecurityEvent('user_login', [
+            'email' => $user->email,
+            'ip' => $request->ip(),
+        ]));
 
         return response()->json([
             'user' => $user,
