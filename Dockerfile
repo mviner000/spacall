@@ -9,7 +9,10 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    nginx
+    nginx \
+    supervisor \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
 
 # 2. Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath
@@ -24,7 +27,6 @@ WORKDIR /app
 COPY . .
 
 # 6. BUILD-TIME PERMISSIONS (Base Layer)
-# We still do this to ensure the image itself is correct
 RUN mkdir -p storage/logs storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache \
     && chown -R www-data:www-data /app \
     && chmod -R 775 storage bootstrap/cache
@@ -53,9 +55,56 @@ RUN echo 'server { \n\
     } \n\
 }' > /etc/nginx/sites-available/default
 
-EXPOSE 80
+# 9. Supervisor config (manages PHP-FPM, Nginx, and Reverb)
+RUN echo '[supervisord] \n\
+nodaemon=true \n\
+user=root \n\
+logfile=/var/log/supervisor/supervisord.log \n\
+pidfile=/var/run/supervisord.pid \n\
+\n\
+[program:php-fpm] \n\
+command=php-fpm --nodaemonize \n\
+autostart=true \n\
+autorestart=true \n\
+stdout_logfile=/dev/stdout \n\
+stdout_logfile_maxbytes=0 \n\
+stderr_logfile=/dev/stderr \n\
+stderr_logfile_maxbytes=0 \n\
+\n\
+[program:nginx] \n\
+command=nginx -g "daemon off;" \n\
+autostart=true \n\
+autorestart=true \n\
+stdout_logfile=/dev/stdout \n\
+stdout_logfile_maxbytes=0 \n\
+stderr_logfile=/dev/stderr \n\
+stderr_logfile_maxbytes=0 \n\
+\n\
+[program:reverb] \n\
+command=/app/artisan-reverb-wrapper.sh \n\
+autostart=true \n\
+autorestart=true \n\
+user=www-data \n\
+stdout_logfile=/dev/stdout \n\
+stdout_logfile_maxbytes=0 \n\
+stderr_logfile=/dev/stderr \n\
+stderr_logfile_maxbytes=0 \n\
+' > /etc/supervisor/conf.d/supervisord.conf
 
-# 9. ROBUST STARTUP SEQUENCE (The Fix)
-# We act as ROOT first to force ownership of the mounted volumes (storage/cache).
-# Then we switch to www-data to run the app logic securely.
-CMD ["sh", "-c", "chown -R www-data:www-data /app/storage /app/bootstrap/cache && su -s /bin/sh -c 'php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache' www-data && php-fpm -D && nginx -g 'daemon off;'"]
+# 10. Create Reverb startup wrapper script
+RUN echo '#!/bin/bash \n\
+php /app/artisan reverb:start --host=0.0.0.0 --port=8081 --debug \n\
+' > /app/artisan-reverb-wrapper.sh \
+    && chmod +x /app/artisan-reverb-wrapper.sh
+
+EXPOSE 80 8081
+
+# 11. ROBUST STARTUP SEQUENCE
+CMD ["sh", "-c", "\
+    chown -R www-data:www-data /app/storage /app/bootstrap/cache && \
+    su -s /bin/sh -c 'php artisan migrate --force && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache' www-data && \
+    /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf \
+"]
